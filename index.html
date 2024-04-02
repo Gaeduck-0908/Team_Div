@@ -38,7 +38,7 @@
             margin: 8px 0;
             border-radius: 4px;
             border: 1px solid #ddd;
-            box-sizing: border-box; /* Added this to include padding in the element's total width and height */
+            box-sizing: border-box; 
         }
 
         button {
@@ -73,7 +73,14 @@
             background-color: #f9f9f9;
             border-radius: 4px;
         }
+
+        footer {
+            position: relative;
+            bottom : 0;
+            padding : 20px;
+        }
     </style>
+    <link rel="Icon" href="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1711609978/noticon/goy8tfeuevcdimme8vcl.png">
 </head>
 <body>
     <h1>내전 팀 나누기</h1>
@@ -90,6 +97,9 @@
     </form>
 
     <div id="teamOutput"></div>
+    <footer>
+        Made by Gaeduck
+    </footer>
 
     <script>
         function generateParticipantFields(count) {
