@@ -157,15 +157,12 @@
             let team1Score = 0, team2Score = 0;
 
             participants.forEach((participant, index) => {
-                if ((participants.length % 2 === 0) ||
-                    (index === participants.length - 1 && team1Score > team2Score)) {
-                    if (team1.length <= team2.length) {
-                        team1.push(participant);
-                        team1Score += participant.tier;
-                    } else {
-                        team2.push(participant);
-                        team2Score += participant.tier;
-                    }
+                if (team1.length < team2.length) {
+                    team1.push(participant);
+                    team1Score += participant.tier;
+                } else if (team1.length > team2.length) {
+                    team2.push(participant);
+                    team2Score += participant.tier;
                 } else {
                     if (team1Score <= team2Score) {
                         team1.push(participant);
