@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>내전 팀 나누기</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            height: 100vh;
+            background-color: #f0f0f0;
+        }
+
+        h1, h2, h3 {
+            color: #333;
+        }
+
+        #teamForm {
+            width: 500px;
+            height: auto;
+            overflow-y: auto;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        label {
+            margin-right: 10px;
+        }
+
+        input, select, button {
+            padding: 8px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            box-sizing: border-box; 
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #teamOutput {
+            display: none;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 60%;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin: 5px 0;
+            padding: 5px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+
+        footer {
+            position: relative;
+            bottom : 0;
+            padding : 20px;
+        }
+    </style>
+    <link rel="Icon" href="https://noticon-static.tammolo.com/dgggcrkxq/image/upload/v1711609978/noticon/goy8tfeuevcdimme8vcl.png">
+</head>
+<body>
+    <h1>리그오브레전드 내전 팀 나누기</h1>
+
+    <form id="teamForm">
+        <label for="participantCount">참가 인원수:</label>
+        <input type="number" id="participantCount" name="participantCount" min="0" required><br><br>
+
+        <h3>참가 인원의 정보입력:</h3>
+
+        <div id="participantDetails"></div>
+        
+        <button type="button" onclick="location.href='/'">이전으로</button>
+        <button type="submit">나누기!</button>
+    </form>
+
+    <div id="teamOutput"></div>
+    <footer>
+        Made by Gaeduck
+    </footer>
+
+    <script>
+        function generateParticipantFields(count) {
+            var participantDetails = document.getElementById("participantDetails");
+            participantDetails.innerHTML = "";
+
+            for (var i = 1; i <= count; i++) {
+                var participantDiv = document.createElement("div");
+                participantDiv.innerHTML = `
+                    <label for="name${i}">이름:</label>
+                    <input type="text" id="name${i}" name="name${i}" required>
+                    <label for="tier${i}">티어:</label>
+                    <select id="tier${i}" name="tier${i}" required>
+                        <option value="1">아이언</option>
+                        <option value="2">브론즈</option>
+                        <option value="3">실버</option>
+                        <option value="4">골드</option>
+                        <option value="5">플레티넘</option>
+                        <option value="6">에메랄드</option>
+                        <option value="7">다이아몬드</option>
+                        <option value="8">마스터</option>
+                        <option value="9">그랜드마스터</option>
+                        <option value="10">챌린저</option>
+                    </select><br><br>
+                `;
+                participantDetails.appendChild(participantDiv);
+            }
+        }
+
+        var participantCountInput = document.getElementById("participantCount");
+        participantCountInput.addEventListener("input", function() {
+            var count = parseInt(participantCountInput.value);
+            if (count > 10) {
+                alert("참가 인원수는 최대 10명입니다.");
+                count = 10;
+                participantCountInput.value = 10;
+            }
+            generateParticipantFields(count);
+        });
+
+        var teamForm = document.getElementById("teamForm");
+        teamForm.addEventListener("submit", function(event) {
+            event.preventDefault();
+
+            var participants = Array.from(document.querySelectorAll("[id^='name']")).map(function(nameInput, index) {
+                return {
+                    name: nameInput.value,
+                    tier: parseInt(document.getElementById(`tier${index + 1}`).value)
+                };
+            });
+
+            participants.sort((a, b) => b.tier - a.tier);
+
+            let team1 = [], team2 = [];
+            let team1Score = 0, team2Score = 0;
+
+            if (participants.length % 2 !== 0) {
+                let highestTierParticipant = participants.shift();
+                team1.push(highestTierParticipant);
+                team1Score += highestTierParticipant.tier;
+            }
+
+            participants.forEach((participant) => {
+                if (team1Score <= team2Score) {
+                    team1.push(participant);
+                    team1Score += participant.tier;
+                } else {
+                    team2.push(participant);
+                    team2Score += participant.tier;
+                }
+            });
+
+            console.log("1팀 : " + team1Score);
+            console.log("2팀 : " + team2Score);
+
+            teamOutput.style.display = "block";
+            displayTeams(team1, team2);
+        });
+
+        function displayTeams(team1, team2) {
+            var teamOutput = document.getElementById("teamOutput");
+            teamOutput.innerHTML = `<h2>Team 1</h2><ul>${team1.map(participant => `<li>${participant.name} - ${tierLabel(participant.tier)}</li>`).join("")}</ul>` + 
+                                   `<h2>Team 2</h2><ul>${team2.map(participant => `<li>${participant.name} - ${tierLabel(participant.tier)}</li>`).join("")}</ul>`;
+        }
+
+        function tierLabel(tierValue) {
+            switch (tierValue) {
+                case 1: return "아이언";
+                case 2: return "브론즈";
+                case 3: return "실버";
+                case 4: return "골드";
+                case 5: return "플레티넘";
+                case 6: return "에메랄드";
+                case 7: return "다이아몬드";
+                case 8: return "마스터";
+                case 9: return "그랜드마스터";
+                case 10: return "챌린저";
+                default: return "Unknown";
+            }
+        }
+    </script>
+</body>
+</html>
