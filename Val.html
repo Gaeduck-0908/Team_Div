@@ -156,19 +156,24 @@
             let team1 = [], team2 = [];
             let team1Score = 0, team2Score = 0;
 
-            if (participants.length % 2 !== 0) {
-                let highestTierParticipant = participants.shift();
-                team1.push(highestTierParticipant);
-                team1Score += highestTierParticipant.tier;
-            }
-
-            participants.forEach((participant) => {
-                if (team1Score <= team2Score) {
-                    team1.push(participant);
-                    team1Score += participant.tier;
+            participants.forEach((participant, index) => {
+                if ((participants.length % 2 === 0) ||
+                    (index === participants.length - 1 && team1Score > team2Score)) {
+                    if (team1.length <= team2.length) {
+                        team1.push(participant);
+                        team1Score += participant.tier;
+                    } else {
+                        team2.push(participant);
+                        team2Score += participant.tier;
+                    }
                 } else {
-                    team2.push(participant);
-                    team2Score += participant.tier;
+                    if (team1Score <= team2Score) {
+                        team1.push(participant);
+                        team1Score += participant.tier;
+                    } else {
+                        team2.push(participant);
+                        team2Score += participant.tier;
+                    }
                 }
             });
 
